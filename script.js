@@ -133,15 +133,27 @@ const scroll = new LocomotiveScroll({
 }
 
 function cardShow(){
-    document.querySelectorAll(".cnt")
-    .forEach(function (cnt){
+    const cursor = document.querySelector("#cursor");
+    const cursorChildren = cursor ? Array.from(cursor.children) : [];
+
+    if (!cursorChildren.length) return;
+
+    document.querySelectorAll(".cnt").forEach(function (cnt){
         cnt.addEventListener("mousemove", function(dets) {
-            document.querySelector("#cursor").children[dets.target.dataset.index].style.opacity = 1;
-            document.querySelector("#cursor").children[dets.target.dataset.index].style.transform = `translate(${dets.clientX}px, ${dets.clientY}px)`; 
-            
-        })
-    })
-    
+            const index = dets.target.dataset.index;
+            const preview = cursorChildren[index];
+
+            if (!preview) return;
+
+            cursorChildren.forEach(child => child.style.opacity = 0);
+            preview.style.opacity = 1;
+            preview.style.transform = `translate(${dets.clientX}px, ${dets.clientY}px)`;
+        });
+
+        cnt.addEventListener("mouseleave", function() {
+            cursorChildren.forEach(child => child.style.opacity = 0);
+        });
+    });
 }
 
 revealToSpan();
